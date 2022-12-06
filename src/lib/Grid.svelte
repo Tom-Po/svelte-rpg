@@ -66,9 +66,6 @@
         );
         triggerFight(events[encounterIndex]);
     }
-    $: {
-        console.log(eventTiles);
-    }
 </script>
 
 <svelte:window on:keydown={onKeyDown} />
