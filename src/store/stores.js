@@ -6,7 +6,8 @@ const defaultCharacter = {
     baseHp: 100,
     position: 0,
     oldPosition: 0,
-    alive: true
+    alive: true,
+    explored: [0]
 }
 
 function createCharacter() {
@@ -26,6 +27,7 @@ function createCharacter() {
             return {
                 ...character,
                 position,
+                explored: [...character.explored, position]
             }
         }),
         setRefPosition: (position) => update(character => {

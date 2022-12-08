@@ -24,6 +24,9 @@
         <div class="CharacterInfos">
             <div>{$character.name}</div>
             <div>HP: {$character.hp} / {$character.baseHp}</div>
+            {#each $character.explored as item}
+                <span>{item}</span> {$character.explored.length > 1 ? "-" : ""}
+            {/each}
         </div>
     {/if}
 </div>

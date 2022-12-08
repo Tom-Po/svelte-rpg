@@ -10,9 +10,10 @@
 
     export let events = [];
 
-    let eventTiles = [];
+    let tiles,
+        eventTiles = [];
     let tilesCount = 20;
-    let rowSize = tilesCount / 4;
+    let rowSize = tilesCount / 5;
 
     function getRandomArbitrary(min, max) {
         return Math.random() * (max - min) + min;
@@ -27,19 +28,21 @@
     }
 
     function moveLeft() {
+        if ($character.position % rowSize === 0) return;
         setActiveTile($character.position - 1);
     }
 
     function moveRight() {
+        if ($character.position % rowSize === 3) return;
         setActiveTile($character.position + 1);
     }
 
     function moveDown() {
-        setActiveTile($character.position + (rowSize - 1));
+        setActiveTile($character.position + rowSize);
     }
 
     function moveUp() {
-        setActiveTile($character.position - (rowSize - 1));
+        setActiveTile($character.position - rowSize);
     }
 
     function onKeyDown({ keyCode }) {
@@ -58,8 +61,22 @@
                 break;
         }
     }
+    $: {
+        eventTiles = events.map((e) => e.id);
+        tiles = Array(tilesCount)
+            .fill()
+            .map((_, id) => {
+                const eventId = events.findIndex((e) => e.id === id);
+                return {
+                    id,
+                    encounter: eventId !== -1 ? events[eventId].encounter : [],
+                    visited: $character.explored.includes(id),
+                    active: $character.position === id,
+                    event: eventId !== -1,
+                };
+            });
+    }
 
-    $: eventTiles = events.map((e) => e.id);
     $: if (eventTiles.includes($character.position)) {
         const encounterIndex = events.findIndex(
             (i) => i.id === $character.position
@@ -69,17 +86,17 @@
 </script>
 
 <svelte:window on:keydown={onKeyDown} />
-
 <div class="Grid" style="--width: {16}">
-    {#each Array(tilesCount) as _, idx}
+    {#each tiles as { visited, active, event }, idx}
         <div
             class="GridItem"
-            class:active={idx === $character.position}
-            class:event={eventTiles.includes(idx)}
+            class:visited={visited && !event}
+            class:active
+            class:event
         >
             {#if idx === $character.position}
                 <slot />
-            {:else if eventTiles.includes(idx)}
+            {:else if event}
                 <div>Mob</div>
             {:else}
                 <!-- else content here -->
@@ -108,5 +125,8 @@
 
     .GridItem.event {
         background-color: orangered;
+    }
+    .GridItem.visited {
+        background-color: rgb(107, 107, 55);
     }
 </style>

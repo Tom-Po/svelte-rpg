@@ -7,7 +7,7 @@
   import { events } from "./store/mobs";
 
   let enemy = {
-    position: 2,
+    position: 100,
     encounter: {
       name: "Trashmob",
       hp: 100,
@@ -60,10 +60,10 @@
     <Character />
   </Grid>
   <Menu />
+  <button on:click={reset}>Reset</button>
   {#if youWon || !$character.alive}
     <h1>{youWon ? "Victory" : "Defeat"}</h1>
   {/if}
-  <button on:click={reset}>Reset</button>
 </main>
 
 <style>
